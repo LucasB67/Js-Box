@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content = "IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Exercice Box</title>
+</head>
+
+
+<body>
+
+    <div id="board"></div>
+
+    <script>
+
+        function shuffleChildren(parent){
+            let children = parent.children
+            let i = children.length, randInt, temp
+            while (--i > 0){
+                randInt = Math.floor(Math.random()*(i+1)) // On obtient le nombre 
+                temp = children[randInt] //On sauvegarde l'item à cette position
+                children[randInt] = children[i] //On met le dernier disponible à la position obtenue
+                parent.appendChild(temp) 
+            }
+        }
+
+        function showReaction(type, clickedBox){
+            clickedBox.classList.add(type)
+            if (type !== "succes"){
+                setTimeout(function(){
+                    clickedBox.classList.remove(type)
+                }, 800)
+            }
+        }
+
+        const numBox = 8;
+        const box = document.createElement("div")
+        box.classList.add("box")
+
+        const board = document.querySelector("#board") // réfère à la div #board
+        let followNumber = 1
+
+        for (let i = 1; i <= numBox; i++){
+            let newBox = box.cloneNode() // copier l'élement pour éviter une référence
+            newBox.innerText = i
+            board.appendChild(newBox)
+
+            newBox.addEventListener("click", function(){
+
+                if (i == followNumber){
+                    newBox.classList.add("box-clicked")
+                    if (followNumber == board.children.length){
+                        board.querySelectorAll(".box").forEach(function(box){
+                            showReaction("succes", box)
+                        })
+                    }
+                    followNumber++
+                } else if (i > followNumber){
+                    showReaction("error", newBox)
+                    followNumber = 1
+                    board.querySelectorAll(".box-clicked").forEach(function(validBox){
+                        validBox.classList.remove("box-clicked")
+                    })
+                } else {
+                    showReaction("notice", newBox)
+                }
+
+            })
+        }
+
+        shuffleChildren(board)
+
+
+    </script>
+
+</body>
+
+</html>
